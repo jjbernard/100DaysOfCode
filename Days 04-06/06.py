@@ -1,10 +1,10 @@
 import csv
+import os
 from urllib.request import urlretrieve
-from collections import namedtuple, defaultdict, Counter
+from collections import namedtuple, defaultdict
 
 movie_data = 'https://raw.githubusercontent.com/sundeepblue/movie_rating_prediction/master/movie_metadata.csv'
 movie_csv = 'movies.csv'
-urlretrieve(movie_data, movie_csv)
 
 Movies = namedtuple('Movies',
                     "color director_name num_critic_for_reviews duration director_facebook_likes actor_3_facebook_likes\
@@ -47,11 +47,6 @@ def get_movies_by_director(film_list, earliest_year):
     return directors
 
 
-def ask_for_earliest_year():
-    year = input('What is the earliest year of analysis for this dataset? ')
-    return year
-
-
 def compute_average_imdb_score_per_director(directors_list, min_number):
     director_scores = defaultdict(list)
     for director, movies in directors_list.items():
@@ -75,7 +70,7 @@ def print_director_ranking(ranking, directors, number):
 
     for k, v in ranking.items():
         print("{:<30} {:>30}".format(str(k), str(v)))
-        print('-'*61)
+        print('-' * 61)
         for movie in directors[k]:
             print('{:<30} {:>30}'.format(movie.title, movie.score))
         print()
@@ -84,24 +79,22 @@ def print_director_ranking(ranking, directors, number):
             break
 
 
-def ask_for_how_many_directors_to_print():
+def ask_user_for_input():
+    year = input('What is the earliest year of analysis for this dataset? ')
     number = input('How many directors would you like to list? ')
-    return int(number)
-
-
-def ask_how_many_movies_to_count_per_director():
-    number = input('How many movies at minimum should we consider per director? ')
-    return int(number)
+    number_of_movies = input('How many movies at minimum should we consider per director? ')
+    return int(year), int(number), int(number_of_movies)
 
 
 if __name__ == '__main__':
     print_header()
-    year = ask_for_earliest_year()
-    number = ask_for_how_many_directors_to_print()
-    number_of_movies = ask_how_many_movies_to_count_per_director()
+    year, number, number_of_movies = ask_user_for_input()
     print()
+    if not os.path.exists(movie_csv):
+        urlretrieve(movie_data, movie_csv)
+
     data = get_movies_list(data=movie_csv)
-    directors = get_movies_by_director(data, int(year))
+    directors = get_movies_by_director(data, year)
     scores = compute_average_imdb_score_per_director(directors, number_of_movies)
 
     ranking = {k: v for k, v in sorted(scores.items(), key=lambda item: item[1], reverse=True)}
