@@ -64,15 +64,13 @@ def compute_average_imdb_score_per_director(directors_list, min_number):
 
 
 def print_director_ranking(ranking, directors, number):
-    # for k, v in ranking.items():
-    #     print('{} has an average score of {} from IMDB'.format(k, v))
     counter = 0
 
     for k, v in ranking.items():
-        print("{:<30} {:>30}".format(str(k), str(v)))
-        print('-' * 61)
+        print("{:<40} {:>40}".format(str(k), str(v)))
+        print('-' * 81)
         for movie in directors[k]:
-            print('{:<30} {:>30}'.format(movie.title, movie.score))
+            print('{:<40} {:>40}'.format(movie.title.strip()[:45], movie.score))
         print()
         counter += 1
         if counter >= number:
@@ -80,9 +78,27 @@ def print_director_ranking(ranking, directors, number):
 
 
 def ask_user_for_input():
-    year = input('What is the earliest year of analysis for this dataset? ')
-    number = input('How many directors would you like to list? ')
-    number_of_movies = input('How many movies at minimum should we consider per director? ')
+    while True:
+        try:
+            year = input('What is the earliest year of analysis for this dataset? [YYYY] ')
+            int(year)
+            break
+        except ValueError:
+            print("You should enter the earlier year of analysis")
+    while True:
+        try:
+            number = input('How many directors would you like to list? ')
+            int(number)
+            break
+        except ValueError:
+            print("You should enter the maximum number of directors for the analysis")
+    while True:
+        try:
+            number_of_movies = input('How many movies at minimum should we consider per director? ')
+            int(number_of_movies)
+            break
+        except ValueError:
+            print("You should enter the minimum number of movies per director for consideration")
     return int(year), int(number), int(number_of_movies)
 
 
