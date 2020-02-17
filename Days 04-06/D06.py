@@ -6,6 +6,8 @@ from collections import namedtuple, defaultdict
 movie_data = 'https://raw.githubusercontent.com/sundeepblue/movie_rating_prediction/master/movie_metadata.csv'
 movie_csv = 'movies.csv'
 
+# todo: extract first line of movie_data file instead
+
 Movies = namedtuple('Movies',
                     "color director_name num_critic_for_reviews duration director_facebook_likes actor_3_facebook_likes\
                      actor_2_name actor_1_facebook_likes gross genres actor_1_name movie_title num_voted_users \
@@ -77,29 +79,29 @@ def print_director_ranking(ranking, directors, number):
             break
 
 
+def user_input(msg: str, error_msg: str):
+    while True:
+        try:
+            result = input(msg)
+            int(result)
+            break
+        except ValueError:
+            print(error_msg)
+
+    return int(result)
+
+
 def ask_user_for_input():
-    while True:
-        try:
-            year = input('What is the earliest year of analysis for this dataset? [YYYY] ')
-            int(year)
-            break
-        except ValueError:
-            print("You should enter the earlier year of analysis")
-    while True:
-        try:
-            number = input('How many directors would you like to list? ')
-            int(number)
-            break
-        except ValueError:
-            print("You should enter the maximum number of directors for the analysis")
-    while True:
-        try:
-            number_of_movies = input('How many movies at minimum should we consider per director? ')
-            int(number_of_movies)
-            break
-        except ValueError:
-            print("You should enter the minimum number of movies per director for consideration")
-    return int(year), int(number), int(number_of_movies)
+
+    year = user_input('What is the earliest year of analysis for this dataset? [YYYY] ',
+                      'You should enter the earlier year of analysis')
+    number = user_input('How many directors would you like to list? ',
+                        'You should enter the maximum number of directors for the analysis')
+    number_of_movies = user_input('How many movies at minimum should we consider per director? ',
+                                  'You should enter the minimum number of movies per \
+                                  director for consideration')
+
+    return year, number, number_of_movies
 
 
 if __name__ == '__main__':
