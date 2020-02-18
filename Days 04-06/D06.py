@@ -25,6 +25,16 @@ def print_header():
     print()
 
 
+def get_data_from_file(file):
+    with open(file, encoding='utf-8') as f:
+        line = csv.DictReader(f)
+        yield line
+
+
+def create_movies_dataset(file):
+    pass
+
+
 def get_movies_list(data=movie_csv):
     with open(data, encoding='utf-8') as f:
         return [Movies(**line) for line in csv.DictReader(f)]
@@ -92,7 +102,6 @@ def user_input(msg: str, error_msg: str):
 
 
 def ask_user_for_input():
-
     year = user_input('What is the earliest year of analysis for this dataset? [YYYY] ',
                       'You should enter the earlier year of analysis')
     number = user_input('How many directors would you like to list? ',
