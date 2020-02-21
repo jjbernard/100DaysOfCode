@@ -7,6 +7,9 @@ NAMES = ['arnold schwarzenegger', 'alec baldwin', 'bob belderbos',
 
 name_list = [name.title() for name in NAMES]
 
+name_reversed = [" ".join(list(reversed(name.split()))) for name in name_list]
+
+
 def gen_pair(nl):
     for i in range(50):
         pairs = random.choices(nl, k=2)
