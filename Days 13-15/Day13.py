@@ -18,10 +18,13 @@ class Roll:
 
 
 class Player:
-    def __init__(self, name, roll):
+    def __init__(self, name):
         self.name = name
-        self.roll = roll
+        self.roll = None
         self.won = 0
+
+    def set_roll(self, roll):
+        self.roll = roll
 
     def win(self):
         self.won += 1
@@ -31,9 +34,6 @@ class Player:
         print("{} chose {}".format(self.name, self.roll.rtype))
         print("{} chose {}".format(player.name, player.roll.rtype))
         return outcome
-
-    def print_outcome(self):
-        pass
 
 
 def print_header():
@@ -50,24 +50,21 @@ def print_name():
     return name
 
 
-def create_players(names, choices):
-    roll0, roll1 = Roll(choices[0]), Roll(choices[1])
-    return Player(names[0], roll0), Player(names[1], roll1)
+def create_players(names):
+    return Player(names[0]), Player(names[1])
 
 
-def game_loop(name):
-    # todo: create players outside loop and only update rolls inside the loop, since what we do reset self.won!!!
-    counter = 1
+def game_loop(names):
+    player, computer = names
+    counter = 0
     while counter < 3:
         player_choice = input("What is your choice [rock], [paper] or [scissors]?  ")
         if player_choice not in choices:
             print("Sorry, try again")
             continue
-        computer_choice = random.choice(choices)
-        player, computer = create_players(
-            [name, "Computer"], [player_choice, computer_choice]
-        )
 
+        player.set_roll(Roll(player_choice))
+        computer.set_roll(Roll(random.choice(choices)))
         outcome = player.compute_outcome(computer)
 
         if outcome == "Tie":
@@ -94,4 +91,5 @@ def game_loop(name):
 if __name__ == "__main__":
     print_header()
     player = print_name()
-    game_loop(player)
+    players = create_players([player, "Computer"])
+    game_loop(players)
