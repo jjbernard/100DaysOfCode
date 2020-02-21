@@ -5,8 +5,7 @@ NAMES = ['arnold schwarzenegger', 'alec baldwin', 'bob belderbos',
          'julbob pybites', 'bob belderbos', 'julian sequeira',
          'al pacino', 'brad pitt', 'matt damon', 'brad pitt']
 
-name_list = [f'{name.title()}' for name in NAMES]
-
+name_list = [name.title() for name in NAMES]
 
 def gen_pair(nl):
     for i in range(50):
