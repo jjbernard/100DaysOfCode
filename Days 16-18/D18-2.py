@@ -5,7 +5,7 @@ import os
 import re
 from collections import Counter
 
-IMPORT_MATCHING = '^(import.*)'
+MATCH_IMPORT = '^(import.*)'
 
 
 def main():
@@ -27,7 +27,7 @@ def main():
 def parse_file(file):
     with open(file) as f:
         for line in f:
-            match = re.match(IMPORT_MATCHING, line)
+            match = re.match(MATCH_IMPORT, line)
             if match is not None:
                 yield [imports.strip() for imports in match.group()[7:].split()]
             else:
