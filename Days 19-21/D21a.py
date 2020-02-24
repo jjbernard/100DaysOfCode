@@ -10,5 +10,18 @@ def get_attendees():
         print(participant)
 
 
+friends = 'bob joe bill steve'.split()
+
+
+def friends_teams(list_of_friends, team_size=2, order_does_matter=False):
+    if order_does_matter:
+        return itertools.permutations(list_of_friends, r=team_size)
+    else:
+        return itertools.combinations(list_of_friends, r=team_size)
+
+
 if __name__ == '__main__':
-    get_attendees()
+    # get_attendees()
+    teams = friends_teams(friends, 2, True)
+    for team in teams:
+        print(team)
