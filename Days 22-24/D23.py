@@ -1,4 +1,4 @@
-from functools import wraps, partial
+from functools import wraps
 
 
 def make_html(element):
