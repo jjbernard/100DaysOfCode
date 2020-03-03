@@ -3,6 +3,7 @@ import os
 import urllib.request
 import functools
 from time import perf_counter
+import socket
 
 scrabble_scores = [(1, "E A O I N R T L S U"), (2, "D G"), (3, "B C M P"),
                    (4, "F H V W Y"), (5, "K"), (8, "J X"), (10, "Q Z")]
@@ -34,8 +35,10 @@ def get_possible_dict_words(draw, dictionary):
                 results.append("".join(item).lower())
     return set(results)
 
+
 def compute_score(word):
     return sum([letters_score[letter] for letter in word.upper()])
+
 
 @measure_time
 def find_word_with_highest_score(words):
@@ -57,27 +60,35 @@ def get_permutations_draw(draw):
 @measure_time
 def get_dictionary(dico, dictionary):
     if not os.path.exists(dictionary):
-        urllib.request.urlretrieve(
-            f'https://bites-data.s3.us-east-2.amazonaws.com/{dico}',
-            dictionary)
+        try:
+            urllib.request.urlretrieve(
+                f'https://bites-data.s3.us-east-2.amazonaws.com/{dico}',
+                dictionary)
+        except socket.gaierror:
+            print("It seems something is wrong with your Internet connection...")
+        except urllib.error.URLError:
+            print("There is an issue with the URL provided")
 
-    with open(dictionary) as f:
-        stored_dictionary = set([word.strip().lower() for word in f.read().split()])
-
-    return stored_dictionary
+    try:
+        with open(dictionary) as f:
+            stored_dictionary = set([word.strip().lower() for word in f.read().split()])
+    except FileNotFoundError:
+        print("Couldn't find file {}".format(dictionary))
+        stored_dictionary = None
+    finally:
+        return stored_dictionary
 
 
 if __name__ == '__main__':
     TMP = os.getenv("TMP", "/tmp")
     DICT = 'dictionary.txt'
     DICTIONARY = os.path.join(TMP, DICT)
-    draw = 'Z, U, I, W, T, L, Q'
+    draw = 'H, E, I, A, T, B, R'
     draw = draw.split(', ')
     dictionary = get_dictionary(DICT, DICTIONARY)
-    results = get_possible_dict_words(draw, dictionary)
-
-    print(results)
-
-    word = find_word_with_highest_score(results)
-
-    print("The word with the highest score is {} with a score of {}".format(word[0], word[1]))
+    if dictionary:
+        results = get_possible_dict_words(draw, dictionary)
+        word = find_word_with_highest_score(results)
+        print("The word with the highest score is {} with a score of {}".format(word[0], word[1]))
+    else:
+        print("Something went wrong...")
