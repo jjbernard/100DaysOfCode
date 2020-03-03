@@ -2,56 +2,60 @@ import itertools
 import os
 import urllib.request
 import functools
+from time import perf_counter
 
 scrabble_scores = [(1, "E A O I N R T L S U"), (2, "D G"), (3, "B C M P"),
                    (4, "F H V W Y"), (5, "K"), (8, "J X"), (10, "Q Z")]
-
-TMP = os.getenv("TMP", "/tmp")
-DICT = 'dictionary.txt'
-DICTIONARY = os.path.join(TMP, DICT)
+letters_score = {letter: score for score, letters in scrabble_scores
+                 for letter in letters.split(' ')}
 
 
-# Todo: compute a score finder
-# Todo: compute a higher score finder
-# Todo: create a decorator to measure speed of functions
-# Todo: create a decorator to store / retrieve already computed higher score finder
+def measure_time(func):
+    @functools.wraps(func)
+    def _wrapper(*args, **kwargs):
+        begin = perf_counter()
+        res = func(*args, **kwargs)
+        end = perf_counter()
+        print("Function {} executed in {:.2f} seconds.".format(func.__name__, end - begin))
+        return res
 
-def get_possible_dict_words(draw):
+    return _wrapper
+
+
+@measure_time
+def get_possible_dict_words(draw, dictionary):
     """Get all possible words from a draw (list of letters) which are
        valid dictionary words. Use _get_permutations_draw and provided
        dictionary"""
     results = []
-    for result in _get_permutations_draw(draw):
+    for result in get_permutations_draw(draw):
         for item in result:
             if "".join(item).lower() in dictionary:
                 results.append("".join(item).lower())
     return set(results)
 
-
 def compute_score(word):
-    pass
+    return sum([letters_score[letter] for letter in word.upper()])
+
+@measure_time
+def find_word_with_highest_score(words):
+    scores = dict()
+    for word in words:
+        scores[word] = compute_score(word)
+
+    return max(scores.items(), key=lambda x: x[1])
 
 
-def find_higher_score(words):
-    pass
-
-
-def measure_speed(func):
-    pass
-
-
-def cache_scores(func, size=None):
-    pass
-
-
-def _get_permutations_draw(draw):
+@measure_time
+def get_permutations_draw(draw):
     """Helper to get all permutations of a draw (list of letters), hint:
        use itertools.permutations (order of letters matters)"""
     for i in range(2, len(draw) + 1):
         yield itertools.permutations(draw, i)
 
 
-def get_dictionary(dico=DICT, dictionary=DICTIONARY):
+@measure_time
+def get_dictionary(dico, dictionary):
     if not os.path.exists(dictionary):
         urllib.request.urlretrieve(
             f'https://bites-data.s3.us-east-2.amazonaws.com/{dico}',
@@ -64,8 +68,16 @@ def get_dictionary(dico=DICT, dictionary=DICTIONARY):
 
 
 if __name__ == '__main__':
-    draw = 'T, I, I, G, T, T, L'
+    TMP = os.getenv("TMP", "/tmp")
+    DICT = 'dictionary.txt'
+    DICTIONARY = os.path.join(TMP, DICT)
+    draw = 'Z, U, I, W, T, L, Q'
     draw = draw.split(', ')
-    results = get_possible_dict_words(draw)
+    dictionary = get_dictionary(DICT, DICTIONARY)
+    results = get_possible_dict_words(draw, dictionary)
 
     print(results)
+
+    word = find_word_with_highest_score(results)
+
+    print("The word with the highest score is {} with a score of {}".format(word[0], word[1]))
