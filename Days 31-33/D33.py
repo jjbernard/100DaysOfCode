@@ -8,9 +8,13 @@ MovieResult = collections.namedtuple(
 
 
 def request_search_from_user():
-    search = input('What would you like to search for? ')
-    url = 'http://movie_service.talkpython.fm/api/search/{}'.format(search)
-    return url
+    while True:
+        search = input('What would you like to search for? ')
+        if search.strip() == '':
+            print("You must enter a search term")
+            continue
+        url = 'http://movie_service.talkpython.fm/api/search/{}'.format(search)
+        return url, search
 
 
 def get_movie_data(url):
@@ -32,18 +36,19 @@ def build_movie_list(data):
     movie_list = [MovieResult(**md) for md in movies_list]
     return movie_list
 
-#
-# def print_movies(lst):
-#     print('Found {} movies for search {}'.format(len(movies), search))
-#     for m in movies:
-#         print('{} ---- {}'.format(m.year, m.title))
+
+def print_movies(lst, search):
+    print('Found {} movies for search {}'.format(len(lst), search))
+    for m in lst:
+        print('{} ---- {}'.format(m.year, m.title))
 
 
 if __name__ == '__main__':
-    url = request_search_from_user()
+    url, search = request_search_from_user()
     data = get_movie_data(url)
+
     if data:
         lst = build_movie_list(data)
-        print(lst)
+        print_movies(lst, search)
     else:
         print("Exiting... Try again later")
