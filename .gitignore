@@ -7,3 +7,4 @@ venv/*
 */__pycache__/*
 /Days 31-33/app-log-2020-03-06
 */*/.mypy_cache/
+/Days 40-42/data/mount-data.json
