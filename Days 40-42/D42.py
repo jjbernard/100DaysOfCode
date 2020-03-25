@@ -12,7 +12,7 @@ APIKEY = "xxxxxxxx"
 
 
 def get_json_data(search: str) -> Dict:
-    url = URL + '?apikey=' + APIKEY + '&t=' + search + '&plot=full'
+    url = f'{URL}?apikey={APIKEY}&t={search}&plot=full'
     try:
         r = requests.get(url)
     except requests.exceptions.HTTPError as e:
