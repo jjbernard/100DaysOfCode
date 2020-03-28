@@ -50,7 +50,8 @@ def search_api(search: str) -> str:
 
 def print_results(results: list) -> List[SearchResult]:
     data = [SearchResult(**item) for item in results]
-
+    data = set(data)
+    
     print(f'There are {(len(data))} matching episodes')
     for d in data:
         print(f'{d.id}. {d.title}')
