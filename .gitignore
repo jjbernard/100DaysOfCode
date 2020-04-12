@@ -8,3 +8,6 @@ venv/*
 /Days 31-33/app-log-2020-03-06
 */*/.mypy_cache/
 /Days 40-42/data/mount-data.json
+/Days 46-48/BIM.PA.data
+/Pipfile
+/Pipfile.lock

@@ -9,6 +9,9 @@ Record = namedtuple("Record",
                     "middlename,lastname,suffix,birthday,"
                     "state,party,incumbent,termstart,age")
 
+RecordLight = namedtuple("RecordLight",
+                         "bioguide,firstname,lastname,party,termstart,age")
+
 
 def load_data() -> List:
     current_dir = Path(os.path.dirname(__file__))
@@ -25,9 +28,14 @@ def load_data() -> List:
     return remove_duplicate(data)
 
 
-def parse_data(row: dict) -> Record:
+def parse_data(row: dict) -> RecordLight:
     row['age'] = float(row['age'])
-    record = Record(**row)
+    record = RecordLight(bioguide=row.get('bioguide'),
+                         firstname=row.get('firstname'),
+                         lastname=row.get('lastname'),
+                         party=row.get('party'),
+                         termstart=row.get('termstart'),
+                         age=row.get('age'))
 
     return record
 

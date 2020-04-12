@@ -6,7 +6,10 @@ all US congress members from Jan 1947 to Feb 2014.
 The readme from 538 is here:
 https://github.com/fivethirtyeight/data/tree/master/congress-age
 """
+import cProfile
 
+profiler = cProfile.Profile()
+profiler.disable()
 import tools
 
 # todo: (optional) go further with Pandas?
@@ -46,4 +49,7 @@ def main():
 
 
 if __name__ == '__main__':
+    profiler.enable()
     main()
+    profiler.disable()
+    profiler.print_stats()
